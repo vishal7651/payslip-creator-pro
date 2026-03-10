@@ -3,6 +3,9 @@ export interface CompanyInfo {
   address: string;
   logo: string | null;
   logoBorderColor: string;
+  cinNo: string;
+  pan: string;
+  tanNo: string;
 }
 
 export interface EmployeeInfo {
@@ -11,14 +14,9 @@ export interface EmployeeInfo {
   designation: string;
   gender: string;
   dateOfJoining: string;
-  pfAccount: string;
-  uan: string;
-  saPolicyNo: string;
-  saLicId: string;
   location: string;
   pan: string;
   bankAccount: string;
-  esiNumber: string;
   status: string;
 }
 

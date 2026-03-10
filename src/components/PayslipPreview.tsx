@@ -20,12 +20,49 @@ export function PayslipPreview({ data }: Props) {
 
   const handleGenerate = async () => {
     if (!ref.current) return;
-    const canvas = await html2canvas(ref.current, { scale: 2, useCORS: true });
+
+    // Fix logo size: constrain it during capture
+    const logoEl = ref.current.querySelector("img") as HTMLImageElement | null;
+    const origWidth = logoEl?.style.width;
+    const origHeight = logoEl?.style.height;
+    if (logoEl) {
+      logoEl.style.width = `${logoEl.offsetWidth}px`;
+      logoEl.style.height = `${logoEl.offsetHeight}px`;
+    }
+
+    const canvas = await html2canvas(ref.current, {
+      scale: 3,
+      useCORS: true,
+      backgroundColor: "#ffffff",
+      logging: false,
+    });
+
+    // Restore logo styles
+    if (logoEl) {
+      logoEl.style.width = origWidth || "";
+      logoEl.style.height = origHeight || "";
+    }
+
     const imgData = canvas.toDataURL("image/png");
     const pdf = new jsPDF("p", "mm", "a4");
-    const w = pdf.internal.pageSize.getWidth();
-    const h = (canvas.height * w) / canvas.width;
-    pdf.addImage(imgData, "PNG", 0, 0, w, h);
+    const pageW = pdf.internal.pageSize.getWidth();
+    const pageH = pdf.internal.pageSize.getHeight();
+    const margin = 10;
+    const contentW = pageW - margin * 2;
+    const imgH = (canvas.height * contentW) / canvas.width;
+
+    if (imgH <= pageH - margin * 2) {
+      // Fits on one page
+      pdf.addImage(imgData, "PNG", margin, margin, contentW, imgH);
+    } else {
+      // Scale down to fit one page
+      const scale = (pageH - margin * 2) / imgH;
+      const fitW = contentW * scale;
+      const fitH = imgH * scale;
+      const offsetX = (pageW - fitW) / 2;
+      pdf.addImage(imgData, "PNG", offsetX, margin, fitW, fitH);
+    }
+
     pdf.save(`Payslip_${data.employee.name || "Employee"}_${data.payPeriod.month}_${data.payPeriod.year}.pdf`);
   };
 

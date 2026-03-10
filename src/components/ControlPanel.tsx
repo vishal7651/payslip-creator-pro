@@ -25,7 +25,6 @@ export function ControlPanel({ data, onChange }: Props) {
     const reader = new FileReader();
     reader.onload = () => {
       const result = reader.result as string;
-      // Extract dominant color from logo
       const img = new Image();
       img.onload = () => {
         const canvas = document.createElement("canvas");
@@ -88,6 +87,11 @@ export function ControlPanel({ data, onChange }: Props) {
       <Section title="COMPANY DETAILS">
         <Field label="Company Name" value={data.company.name} onChange={(v) => update("company", { name: v })} />
         <Field label="Registered Address" value={data.company.address} onChange={(v) => update("company", { address: v })} />
+        <div className="grid grid-cols-3 gap-3">
+          <Field label="CIN No" value={data.company.cinNo} onChange={(v) => update("company", { cinNo: v })} />
+          <Field label="PAN" value={data.company.pan} onChange={(v) => update("company", { pan: v })} />
+          <Field label="TAN No" value={data.company.tanNo} onChange={(v) => update("company", { tanNo: v })} />
+        </div>
         <div>
           <label className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider block mb-1.5">Company Logo</label>
           <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleLogo} />
@@ -147,17 +151,8 @@ export function ControlPanel({ data, onChange }: Props) {
         </div>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Bank A/C" value={data.employee.bankAccount} onChange={(v) => update("employee", { bankAccount: v })} />
-          <Field label="ESI Number" value={data.employee.esiNumber} onChange={(v) => update("employee", { esiNumber: v })} />
+          <Field label="Status" value={data.employee.status} onChange={(v) => update("employee", { status: v })} />
         </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="PF A/C" value={data.employee.pfAccount} onChange={(v) => update("employee", { pfAccount: v })} />
-          <Field label="UAN" value={data.employee.uan} onChange={(v) => update("employee", { uan: v })} />
-        </div>
-        <div className="grid grid-cols-2 gap-3">
-          <Field label="SA Policy No" value={data.employee.saPolicyNo} onChange={(v) => update("employee", { saPolicyNo: v })} />
-          <Field label="SA LIC ID" value={data.employee.saLicId} onChange={(v) => update("employee", { saLicId: v })} />
-        </div>
-        <Field label="Status" value={data.employee.status} onChange={(v) => update("employee", { status: v })} />
       </Section>
 
       {/* Earnings */}
